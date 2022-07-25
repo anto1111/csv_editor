@@ -19,9 +19,9 @@ if sys.platform == "win32":
     base = "Win32GUI"
 
 setup(
-    name="guifoo",
+    name="CSV Editor",
     version="0.1",
-    description="My GUI application!",
+    description="CSV Editor application",
     options={"build_exe": build_exe_options},
-    executables=[Executable("csv_editor.py", base=base)],
+    executables=[Executable("csv_editor.py", base=base, icon='icon.ico')],
 )
