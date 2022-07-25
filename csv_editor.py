@@ -7,39 +7,10 @@ from tkinter import ttk
 from tkinter.messagebox import showinfo, askquestion, showerror
 import urllib.request
 import requests
-import time
-import urllib3
-from office365.runtime.auth.authentication_context import AuthenticationContext
-from office365.sharepoint.client_context import ClientContext
-from office365.sharepoint.files.file import File
-
-
-
-
-
-##response = File.open_binary(ctx, "/personal/8931520_fstechnology_it/Shared Documents/DSTASPXN.csv")
-###/personal/8931520_fstechnology_it/Documents/DSTASPXN.csv
-##with open("./DSTASPXN2.csv", "wb") as local_file:
-##    local_file.write(response.content)
-##print(local_file)
-
-
-##tenant_url= "https://gruppofsitaliane-my.sharepoint.com"
-##site_url="https://company.sharepoint.com/sites/sname"    
-##
-##ctx_auth = AuthenticationContext(tenant_url)    
-##
-##if ctx_auth.acquire_token_for_user("8931520@fstechnology.it","Gennaio2023"):
-##   ctx = ClientContext(site_url, ctx_auth)
-##   lists = ctx.web.lists
-##   ctx.load(lists)
-##   ctx.execute_query()
-##
-##   for l in lists:
-##       print(l.properties["Title"])
-##
-##else:
-##   print(ctx_auth.get_last_error())
+##import time
+##from office365.runtime.auth.authentication_context import AuthenticationContext
+##from office365.sharepoint.client_context import ClientContext
+##from office365.sharepoint.files.file import File
 
 
 def _convert_stringval(value):
@@ -106,18 +77,18 @@ def check2(e):
     update2(data)
 
 
-# menubar ###############################################
+# menubar
 def openfile():
-    with open("new.csv") as myfile:
+    with open("output.csv") as myfile:
         csvread = csv.reader(myfile, delimiter=";")
         header = next(csvread) #salta la riga di intestazione
         for row in csvread:
             tabella.insert("", "end", values=row)
 
 def savefile(): 
-    with open("new.csv", "w", newline="") as myfile:
+    with open("output.csv", "w", newline="") as myfile:
         dict_writer = DictWriter(myfile, delimiter=';', fieldnames=['Ccr1', 'Ccr2', 'Descr_da__', 'Descr_a__', 'Da', 'A', 'Prezzo'])
-        if os.stat('new.csv').st_size == 0:        #if file is not empty than header write else not
+        if os.stat('output.csv').st_size == 0:        #if file is not empty than header write else not
             dict_writer.writeheader()
 
             
@@ -178,52 +149,7 @@ def delete():
 
 
 def main():
-
-
-
-
-
-
-    url= "https://gruppofsitaliane-my.sharepoint.com/personal/8931520_fstechnology_it/"
-
-    ctx_auth = AuthenticationContext(url)
-    ctx_auth.acquire_token_for_user('8931520@fstechnology.it', 'Gennaio2023')
-    ctx = ClientContext(url, ctx_auth)
-
-    response = File.open_binary(ctx, "/personal/8931520_fstechnology_it/Documents/DSTASPXN.csv")
-    with open("DSTASPXN_new.csv", "wb") as local_file:
-        local_file.write(response.content)
-
-    with open("DSTASPXN_new.csv") as local_file:    
-        temp_reader = csv.reader(local_file, delimiter=';')
-        data = list(temp_reader)
-        row_val, col_val = 0, 2
-        new_version = data[row_val][col_val]
-
-    with open('DSTASPXN.csv') as infile:
-        temp_reader = csv.reader(infile, delimiter=';')
-        data = list(temp_reader)
-        row_val, col_val = 0, 2
-        old_version = data[row_val][col_val]
-        
-    if new_version > old_version:
-        with open("DSTASPXN.csv", "wb") as local_file:
-            local_file.write(response.content)
-            showinfo("Aggiornamento", "L'aggiornamento del software è avvenuto correttamente")
-    os.remove('DSTASPXN_new.csv')
-
-
-
-
-
-
-
-
-
-
-
-    
-    
+       
     global tabella
     global mydict
     global count
@@ -233,6 +159,26 @@ def main():
     global Descr_a_entry
     global Prezzo_entry
     global toppings
+
+##    url= "https://gruppofsitaliane-my.sharepoint.com/personal/8931520_fstechnology_it/"
+##
+##    ctx_auth = AuthenticationContext(url)
+##    ctx_auth.acquire_token_for_user('8931520@fstechnology.it', 'Gennaio2023')
+##    ctx = ClientContext(url, ctx_auth)
+##
+##    response = File.open_binary(ctx, "/personal/8931520_fstechnology_it/Documents/DSTASPXN.csv")
+##    with open("DSTASPXN_new.csv", "wb") as local_file:
+##        local_file.write(response.content)
+
+
+    github_session = requests.Session()
+
+    # providing raw url to download csv from github
+    csv_url = 'https://raw.githubusercontent.com/anto1111/csv_editor/master/DSTASPXN.csv'
+
+    # per mantenere sempre aggiornati i dati dal DSTASPXN vengono scaricati ad ogni apertura
+    with open("DSTASPXN.csv", "wb") as local_file:
+        local_file.write(github_session.get(csv_url).content)
     
     ttk._convert_stringval = _convert_stringval
     toppings = []
@@ -241,7 +187,6 @@ def main():
         next(reader2)
         for n, row in enumerate(reader2):
             toppings.append(row[0])
-
 
     with open('DSTASPXN.csv', mode='r') as infile:
         #Open a reader to the csv
@@ -254,7 +199,6 @@ def main():
     root = tk.Tk()
     root.title("Inserimento tariffe")
 
-
     mb = Menu(root)
     file_menu = Menu(mb, tearoff=0)
     file_menu.add_command(label="Apri l'ultimo", command=openfile)
@@ -264,7 +208,6 @@ def main():
     mb.add_cascade(label="File", menu=file_menu)
     mb.add_command(label="Info", command=info_menu)
     root.config(menu=mb)
-
 
     # tabella
     tabella = ttk.Treeview(root)
@@ -290,7 +233,6 @@ def main():
     tabella.heading("Da",text="Da",anchor=CENTER)
     tabella.heading("A",text="A",anchor=CENTER)
     tabella.heading("Prezzo",text="Prezzo",anchor=CENTER)
-
 
 
     # inserimento dei dati nella tabella vista
@@ -331,12 +273,10 @@ def main():
     my_list2.bind("<<ListboxSelect>>", fillout2)
     Descr_a_entry.bind("<KeyRelease>", check2)
 
-
     # frame dei button
     Button_frame = Frame(root)
     Button_frame.grid(row=6, column=0)
-
-         
+       
     # button di aggiunta riga csv
     butt_plus = PhotoImage(file="plus.png")
     Input_button = Button(Button_frame, command=input_record, image=butt_plus, 
