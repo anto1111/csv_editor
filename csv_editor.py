@@ -110,12 +110,20 @@ def input_record():
     """ impostazione di lettura dei campi di inserimento """
     global count
 
-    if Prezzo_entry.get() == '':
-        msg = f'Non sono stati inseriti tutti i campi obbligatori'
+    try:
+        if Prezzo_entry.get() == '':
+            msg = f'Non sono stati inseriti tutti i campi obbligatori. Il prezzo deve contenere due cifre decimali e la virgola come separatore (es. 12,90)'
+            showerror(title='Error', message=msg)
+            return
+
+        elif isinstance(float(Prezzo_entry.get().replace(',','.')), float) == False or Prezzo_entry.get()[::-1].find(',') != 2:
+            msg = f'Non sono stati inseriti correttamente tutti i campi obbligatori. Il prezzo deve contenere due cifre decimali e la virgola come separatore (es. 12,90)'
+            showerror(title='Error', message=msg)
+            return
+    except:
+        msg = f'Non sono stati inseriti correttamente tutti i campi obbligatori. Il prezzo deve contenere due cifre decimali e la virgola come separatore (es. 12,90)'
         showerror(title='Error', message=msg)
         return
-    else:
-        pass
 
     try:        
         tabella.insert(
@@ -132,9 +140,12 @@ def input_record():
         mydict[Descr_a_entry.get()][1],
         Prezzo_entry.get()))
     except:
-        msg = f'Non sono stati inseriti tutti i campi obbligatori'
+        msg = f'Non sono stati inseriti correttamente tutti i campi obbligatori'
         showerror(title='Error', message=msg)
         return
+
+    
+
 
     count += 1   
     Descr_da_entry.delete(0,END)
@@ -177,8 +188,13 @@ def main():
     csv_url = 'https://raw.githubusercontent.com/anto1111/csv_editor/master/DSTASPXN.csv'
 
     # per mantenere sempre aggiornati i dati dal DSTASPXN vengono scaricati ad ogni apertura
-    with open("DSTASPXN.csv", "wb") as local_file:
-        local_file.write(github_session.get(csv_url).content)
+    try:
+        with open("DSTASPXN.csv", "wb") as local_file:
+            local_file.write(github_session.get(csv_url).content)
+    except:
+        msg = f'Non è stato possibile scaricare gli ultimi aggiornamenti. Connettersi ad internet e riprovare.'
+        showerror(title='Error', message=msg)
+        return
     
     ttk._convert_stringval = _convert_stringval
     toppings = []
