@@ -79,14 +79,24 @@ def check2(e):
 
 # menubar
 def openfile():
-    with open("output.csv") as myfile:
+    username = os.getlogin()
+    try:
+        os.chdir(f'C:\\Users\\{username}\\OneDrive - Gruppo Ferrovie Dello Stato\\Desktop')
+    except:
+        os.chdir(f'C:\\Users\\{username}\\Desktop')
+    with open('output.csv') as myfile:
         csvread = csv.reader(myfile, delimiter=";")
         header = next(csvread) #salta la riga di intestazione
         for row in csvread:
             tabella.insert("", "end", values=row)
 
-def savefile(): 
-    with open("output.csv", "w", newline="") as myfile:
+def savefile():
+    username = os.getlogin()
+    try:
+        os.chdir(f'C:\\Users\\{username}\\OneDrive - Gruppo Ferrovie Dello Stato\\Desktop')
+    except:
+        os.chdir(f'C:\\Users\\{username}\\Desktop')
+    with open('output.csv', "w", newline="") as myfile:
         dict_writer = DictWriter(myfile, delimiter=';', fieldnames=['Ccr1', 'Ccr2', 'Descr_da__', 'Descr_a__', 'Da', 'A', 'Prezzo'])
         if os.stat('output.csv').st_size == 0:        #if file is not empty than header write else not
             dict_writer.writeheader()
