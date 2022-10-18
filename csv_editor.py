@@ -210,16 +210,16 @@ def main():
     toppings = []
     with open('DSTASPXN.csv', mode='r') as infile:
         reader2 = csv.reader(infile, delimiter=';')
-        next(reader2)
+        #next(reader2)
         for n, row in enumerate(reader2):
             toppings.append(row[0])
 
     with open('DSTASPXN.csv', mode='r') as infile:
         #Open a reader to the csv
         reader1 = csv.reader(infile, delimiter=';', skipinitialspace=True)
-        next(reader1)
+        #next(reader1)
         #Read into the dictionary using dictionary comprehension, key is the first column and row are rest of the columns
-        mydict = { key: row for key, *row in reader1 }         
+        mydict = { key: row for key, *row in reader1 }
             
     # inizializzazione Tkinter
     root = tk.Tk()
